@@ -1,0 +1,28 @@
+\section{\color{red}Fold: the Mother of All}
+
+This is essentially a crib of \cite{hutton99tutorial}.
+
+\subsection{\color{red}The Universal Property}
+
+Suppose a function, $g$, that satisfies the following two equations:
+\begin{center}
+\begin{tabular}{lcl}
+  $g\;\;\emptylist $ & $=$ & $\mathcal{Z}$\\
+  $g\;\;(x:xs)     $ & $=$ & $f\;\;x\;\;(g\;\;xs)$
+\end{tabular}
+\end{center}
+
+\begin{center}
+  \begin{tabular}{lcl}
+    $\begin{array}{lcl}
+      g\;\;\emptylist  &= & v   \\
+      g\;\;(x:xs)      &= & f\;\;x\;\;(g xs) 
+    \end{array}$
+    & $\Leftrightarrow$
+    & $g = fold\;\;f\;\;v $
+  \end{tabular}
+\end{center}
+
+\subsection{\color{red}The Fusion Property}
+
+\subsection{\color{red}Maps and Filters as Folds}

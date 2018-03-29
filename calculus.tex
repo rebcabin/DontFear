@@ -1,0 +1,23 @@
+\section{\color{Red}Monoid Calculus}
+
+
+Let $A_{\mathit{list}}$ be a \textbf{list} of arbitrary items, that is, an ordered collection, with duplicates allowed: $$A_{\mathit{list}} = [a_1, \ldots, a_n]$$
+
+
+\begin{equation}
+\mathrm{hom}[\pp,\cup](f)A_{\mathit{list}}\rightarrow\{f(a_1),\ldots,f(a_n)\}
+\end{equation}
+
+
+\begin{algorithm}
+\centering
+\begin{minipage}{1.85in}
+  \Result \setto \{\}\;
+  \Foreach{$x$ \In $A_{\mathit{list}}$}
+  {\Result \setto \Result $\cup f(x)$ \;}
+  \Return \Result \;
+\end{minipage}
+\end{algorithm}
+
+
+

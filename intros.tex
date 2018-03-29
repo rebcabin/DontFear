@@ -1,0 +1,37 @@
+\title{Don't Fear the Monoids!\\A Tutorial on Multi-Source Query Optimization}
+\author{Brian Beckman
+\\ Microsoft Corporation  
+\\ Version 002
+\\ \texttt{bbeckman@microsoft.com}
+}
+\date{\today}
+
+
+\begin{abstract}
+Queries over all kinds of collections --- object graphs, XML trees, relational databases --- are really aspects of one kind of thing, a \textbf{monoid comprehension}. Reasoning about them as such reveals that they can all be optimized by algebraic transformations such as \textbf{join decorrelation}, \textbf{unnesting}, and \textbf{pushing projections around}, even in the face of arbitrary reference aliases, updates, method calls, and side effects during query execution. This may come as a surprise to database practitioners, who are well acquainted with such optimizations, but only in environments where side effects are squelched. But the mathematics behind this is no more complicated than the familiar relational algebra, which is why I say ``Don't fear the monoids!'' 
+
+This tutorial is targeted to programmers and other computing professionals who need to understand query optimization, and thus monoid comprehensions, but who may not have the required mathematical background at their fingertips.
+\end{abstract}
+
+
+\maketitle
+
+
+\section{\color{Red}Introduction}
+
+
+One often needs data from multiple sources, in different forms, and with different styles of relationships. For instance, imagine planning a vacation trip, and needing
+\begin{itemize}
+	\item in-memory collections of information about cities and countries
+  \item online relational databases of international travel regulations
+  \item XML-mediated web services for hotel, air, and cruise bookings
+\end{itemize}
+Now look for adventure-cruise packages in countries with majority Greek ethnicity and seaside hideaway resorts. Without the ability to query over all these sources at once, we might never find that the perfect spot is in Nicosia, Cyprus, and that prices and the advisory climate are currently favorable for booking a vacation there.
+
+
+The \emph{monoid} is the single idea that reveals just enough similarity amongst these data sources that we can query them together. The monoid is an idea from abstract mathematics, but that should not cause fear --- it is not a difficult idea. The important thing is that, since it is a \emph{mathematical} idea, it is a \emph{precise} idea, and that is what we need for computers. Despite decades of wishful thinking, we still must tell computers what to do in excruciating mathematical precision, at a level often fearsome for humans. 
+
+
+\tableofcontents
+
+

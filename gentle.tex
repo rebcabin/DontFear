@@ -1,0 +1,157 @@
+\section{\color{Red}Gentle Introduction to Monoids}
+
+
+If the following definition causes you the slightest discomfort, then read the rest of this section, where we explain it in elementary terms. Otherwise, it is safe to skip this section.
+
+
+\begin{definition}
+  A \textbf{monoid}, $\Mon{\T}{\oplus}{\Z}$, is a set of elements of type $\T$, closed under an associative binary operation, $\oplus$, with an \textbf{identity}, $\Z$. 
+  \label{def:monoid}
+\end{definition}
+
+
+If you have gotten here, you want a gentle introduction requiring no background in abstract algebra. So consider just ordinary whole numbers and arithmetic. Step-by-step, we carefully relate all new concepts to them, explaining all  generalizations and all symbolic developments. There is no need to fear the words ``abstract'' and ``algebra'' --- the concepts are few, easy, and worth the effort to learn, because they lead to much greater clarity and economy of thought about the technology of data, and much greater power in programs because of the greater variety of things one can query using essentially the same methods. 
+
+
+The basic, foundational, archetypical example of a monoid is the set of natural numbers, allowing only ordinary addition; \emph{not} allowing multiplication, subtraction, or division. Let the symbol $\nats$ stand for the set of natural numbers, that is, for $\{0,1,2,\ldots\}$. 
+Observe the following three facts:
+\begin{itemize}
+  \item $\nats$ is \textbf{closed} under the \textbf{binary operation} of addition, meaning that for any two elements $a$ and $b$ of $\nats$, $a+b$ is also an element of $\nats$.
+	\item Addition is \textbf{associative}, meaning that for any \emph{three} elements $a$, $b$, and $c$ of $\nats$, order of operation does not matter: \mbox{$((a+b)+c)=(a+(b+c))$}. 
+	\item There is a special \textbf{identity} element of $\nats$, namely $0$, that, when added to any other element, say $a$, on the right or on the left, does not change its value. In other words, for any $a$ in $\nats$, $a+0=a$, and $0+a=a$.
+\end{itemize}
+
+
+These are the facts to generalize. Any set of things that satisfies an appropriate generalization of these facts is also a monoid and will have just enough structure to allow us to query it conveniently. The appropriate generalization is over three things: 
+\begin{itemize}
+	\item The \textbf{type} of the elements, that is, the set from which elements of the monoid are drawn. The type generalizes $\nats$ in the example above.
+	\item The associative binary operation under which the monoid is closed. This generalizes the $+$ operation in the example above.
+	\item The identity element: an element that does not change its partner under the binary operation. This generalizes 0 in the example above.
+\end{itemize}
+
+
+Be careful to distinguish between the \emph{type} of the elements in the monoid and the elements of the monoid itself. The monoid's operation places restrictions on the type set. In the present case, the type, $\nats$, is a more general collection than the monoid. The natural numbers \emph{can} do things that do not fit in the monoid. For example, allowing both addition and multiplication gives a much richer \emph{kind} of structure, called a \emph{field}. Allowing subtraction requires negative numbers, not elements of $\nats$. Allowing division requires fractions, also not elements of $\nats$. Below, we present the example of clock numbers, in which the monoid is a finite set, profoundly smaller than the type, which is still the infinite set $\nats$. 
+
+
+From this point on, we always mention the operation and the identity element along with the type of the elements of any monoid. If $\nats$ is the type, $+$ the operation, and $0$ the identity element, then we write the monoid above as $\Mon{\nats}{+}{0}$. This notation perfectly captures just the three concepts we need to generalize.
+
+
+Right away, notice another monoid hiding in the weeds amongst $\nats$, namely one with multiplication alone as the operation and $1$ as the identity element. Write this monoid as $\Mon{\nats}{\times}{1}$. Demonstrate that it is a monoid by copying the three facts above, substituting $\times$ for $+$, ``multiplication'' for ``addition,'' ``multiplied by'' for ``added to,'' and $1$ for $0$:
+\begin{itemize}
+  \item $\nats$ is \textbf{closed} under the \textbf{binary operation} of multiplication, meaning that for any two elements $a$ and $b$ of $\nats$, $a\times b$ is also an element of $\nats$.
+	\item Multiplication is \textbf{associative}, meaning that for any \emph{three} elements $a$, $b$, and $c$ of $\nats$, $((a\times b)\times c)=(a\times (b\times c))$. 
+	\item There is a special \textbf{identity} element of $\Mon{\nats}{\times}{1}$, namely $1$, that, when multiplied by any other element, say $a$, on the right or on the left, does not change its value. In other words, for any $a$ in $\Mon{\nats}{\times}{1}$, $a\times 1=a$, and $1\times a=a$.
+\end{itemize}
+
+
+We now have two different monoids just amongst the familiar whole numbers. In each case, to identify the monoid, identify the type of its elements, its binary operation, and its identity element. To demonstrate it \emph{is} a monoid, show that the operation is closed, associative, and honors the identity on both the left and right sides.
+
+
+Now, consider the numbers on a clock, $1$ through $12$, which are of type $\nats$, that is, elements of the set $\nats$. We can build a monoid out of these numbers by defining an operation for the kind of wrap-around addition that clocks demonstrate mechanically: a restricted addition where $1$ follows $12$, called \emph{addition modulo 12}. Write this monoid as $\Mon{\nats}{+_{12}}{12}$, denoting the operation by ``$+_{12}$'' and recording the identity element as 12. The operation is closed --- it takes any two numbers between 1 and 12 and returns another number between 1 and 12; it is associative --- the order in which addition modulo 12 is applied amongst any three elements does not matter; 12 is the identity --- adding 12 to any number on a clock face amounts to moving the hour hand once around, landing on the same number. This is our first example of a monoid that contains fewer elements than the type set, $\nats$.
+
+
+Now, generalize the symbolism. To write out a perfectly general monoid, $\Mon{\T}{\oplus}{\Z}$, 
+\begin{itemize}
+	\item Use the symbol $\T$ to denote the type set from which elements of the monoid are drawn, realizing that elements of $\T$ may need to be conditioned in some way to bring them into the monoid. This is the generalization of $\nats$ in the examples above.
+	\item Use the symbol $\oplus$ for the binary operation, analogous to the ordinary $+$ symbol. Read it aloud as ``oh-plus'' or ``circle plus.'' This is the generalization of $+$, $\times$, and $+_{12}$ in the examples above.
+	\item Use the symbol $\Z$ to stand for the identity element, analogous to $0$, $1$, and $12$ in the examples above.
+\end{itemize}
+
+
+Under this generalization scheme, we might say that $\nats$ is the $\T$ of $\Mon{\nats}{+}{0}$, that $+$ is the $\oplus$ of $\Mon{\nats}{+}{0}$, and that 0 is the $\Z$ of $\Mon{\nats}{+}{0}$. 
+
+
+The pattern is established, so abstract one last time, copying the facts from above, and making the now-obvious substitutions:
+\begin{enumerate}
+  \item $\Mon{\T}{\oplus}{\Z}$ is closed under the binary operation $\oplus$, meaning that for any two elements $a$ and $b$ of $\Mon{\T}{\oplus}{\Z}$,  $a\oplus b$ is also an element of $\Mon{\T}{\oplus}{\Z}$.
+	\item $\oplus$ is \textbf{associative}, meaning that for any \emph{three} elements $a$, $b$, and $c$, of $\Mon{\T}{\oplus}{\Z}$, $((a\oplus b)\oplus c)=(a\oplus (b\oplus c))$. 
+	\item For any element $a$ of $\Mon{\T}{\oplus}{\Z}$, $a\oplus\Z=a$, and $\Z\oplus a=a$.
+\end{enumerate}
+
+
+When facts are written in general form like this, they are called \textbf{axioms}. To convert them into factual statements about a particular monoid, just substitute a particular set for the type, $\T$, a particular operation for $\oplus$, and a particular element for $\Z$. 
+
+
+Notably missing from the axioms is any direct connection between elements of $\T$ and elements of the monoid. The axioms are dry and parochial without this, but that is intentional. There is much we can deduce about the general monoid without referring to $\T$. Before showing how to process elements of $\T$ to bring them into the monoid, let us see what we can find out.
+
+
+To satisfy the third axiom, we must show that $\Z$ works on both the left and the right. Suppose our monoid has \emph{two} identities, $\Zl$ and $\Zr$, that satisfy the following equations: for any $a$ in $\Mon{\T}{\oplus}{\Z}$, 
+\begin{eqnarray}
+	\label{eqn:zl}\Zl\oplus a=a\\
+	\label{eqn:zr}a\oplus\Zr=a
+\end{eqnarray}
+Is there anything else in the axioms that forces $\Zl=\Zr$? Equation \ref{eqn:zl} certainly implies that $\Zl\oplus\Zr=\Zr$, just by substituting $\Zr$ for $a$. Now, however, substitute $(\Zl\oplus\Zr)$ for $\Zr$ in equation \ref{eqn:zr}:
+\begin{equation*} 
+  a \oplus (\Zl \oplus \Zr) = a 
+\end{equation*}
+By associativity, rewrite this as
+\begin{equation*} 
+  (a \oplus \Zl) \oplus \Zr = a 
+\end{equation*}
+But equation \ref{eqn:zr} asserts that \emph{anything} to the left of $\Zr$ is preserved by $\oplus$, so deduce that
+\begin{equation*} 
+  (a \oplus \Zl) \oplus \Zr = (a \oplus \Zl) = a 
+\end{equation*}
+So, $\Zl$ preserves values even when it appears to the \emph{right} of $\oplus$ with an arbitrary element, $a$, to the left. In other words, it acts exactly like $\Zr$ of equation \ref{eqn:zr} in all circumstances. There is no conceivable way in which $\Zl$ can be distinguished from $\Zr$, so we just say that $\Zl=\Zr$; that is, we have proved
+\begin{lemma}
+  Associativity implies that the left and right identities in a monoid are identical.
+\end{lemma}
+
+
+Notice that this lemma only applies to the identity. We cannot deduce that $a\oplus b$ is the same as $b\oplus a$ in general. This will turn out to be germane with data monoids like lists and sets. However, these considerations invite us to introduce the terms \textbf{commute} and \textbf{commutative} now:
+
+\begin{definition}
+  Consider a particular element $b$ of monoid $\Mon{\T}{\oplus}{\Z}$. If $a\oplus b = b\oplus a$ for any $a$ in $\Mon{\T}{\oplus}{\Z}$, then $b$ \textbf{commutes} under $\oplus$.
+\end{definition}
+
+\begin{definition}
+  A monoid $\Mon{\T}{\oplus}{\Z}$ is \textbf{commutative} if all its elements commute under $\oplus$. Otherwise, the monoid is not commutative.
+\end{definition}
+
+
+For an example of a non-commutative monoid, consider $2\times 2$ matrices of whole numbers under ordinary matrix multiplication:
+\begin{equation}
+\left(\begin{array}{cc} a & b \\ c & d \end{array}\right)
+\left(\begin{array}{cc} e & f \\ g & h \end{array}\right) =
+\left(\begin{array}{cc} a e + b g & a f + b h \\ 
+                        c e + d g & c f + d h \end{array}\right)
+\label{eqn:mat1}
+\end{equation}
+Since the right-hand side is a matrix of whole numbers so long as each factor matrix on the left-hand side contains only whole numbers, then the set is closed under matrix multiplication. It is easy, if a bit lengthy, to check that matrix multiplication is associative. It is also easy to see that 
+\[
+\left(\begin{array}{cc} 1 & 0 \\ 0 & 1 \end{array}\right)
+\]
+is an identity. So, we have a monoid! But matrix multiplication is \emph{not} commutative, as reversing the order of the factors shows:
+\begin{align}
+\left(\begin{array}{cc} e & f \\ g & h \end{array}\right) 
+\left(\begin{array}{cc} a & b \\ c & d \end{array}\right) & =
+\left(\begin{array}{cc} e a + f c & e b + f d \\ 
+                        g a + h c & g b + h d \end{array}\right) 
+\label{eqn:mat2} \\
+\nonumber
+& = \left(\begin{array}{cc} ae + cf & be + df \\ 
+                            ag + ch & bg + dh \end{array}\right)
+\end{align}
+The second line in (\ref{eqn:mat2}) is justified because the underlying operation of integer multiplication is commutative, so we may rewrite $ea+fc$ as $ae+cf$, but that is as close as we can get to the corresponding element in (\ref{eqn:mat1}). No rearrangement of the terms will make $ae+cf$ equal to $ae+bg$ in general. For the vast majority of choices of values of the eight variables $a$ through $h$ from $\nats$, the two matrix products in equations \ref{eqn:mat1} and \ref{eqn:mat2} above have different values.
+
+
+Is the identity of any monoid unique? Suppose we have two elements, $\Z_1$ and $\Z_2$, that satisfy, for any $a$ in $\Mon{\T}{\oplus}{\Z}$
+\begin{eqnarray}
+	\nonumber \Z_1\oplus a=a\oplus\Z_1=a\\
+	\nonumber \Z_2\oplus a=a\oplus\Z_2=a
+\end{eqnarray}
+So, in particular, $\Z_1\oplus\Z_2=\Z_1$, and $\Z_1\oplus\Z_2=\Z_2$, so we have proved
+\begin{lemma}
+  The identity of a monoid is unique.
+\end{lemma}
+
+
+These are powerful results. If we can identify \emph{anything} as a monoid, then we know immediately that its identity is unique and commutes. We do \emph{not}, in general, know whether the entire monoid is commutative. 
+
+
+At this point, we can reiterate definition \ref{def:monoid}:
+\begin{quote}
+\emph{A \textbf{monoid}, $\Mon{\T}{\oplus}{\Z}$, is a set of elements of type $\T$, closed under an associative binary operation, $\oplus$, with an \textbf{identity}, $\Z$. }
+\end{quote}
+and hope that you are totally comfortable with it. The only missing topic is a precise discussion of the connection between $\T$ and the monoid, but we address this below, in the context of collection monoids like lists and sets. 
+

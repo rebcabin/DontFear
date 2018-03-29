@@ -1,0 +1,215 @@
+\begin{center}
+\begin{tabular}{ll}
+  $\mathcal{A}=\Mon{\T}{\oplus}{\Z},\text{ with unit }\mathcal{U}$
+     &{\emph{a collection monoid}}\\&\\
+  $A_1\in\mathcal{A}, A_2\in\mathcal{A}, \ldots$
+     &{\emph{elements of $\mathcal{A}$}}\\&\\
+  $t_1\in\T, t_2\in\T, \ldots$
+     &{\parbox{2.85in}{\emph{elements of the base-type set; 
+       elements of elements of $\mathcal{A}$}}}\\&\\
+  $a_1=\mathcal{U}(t_1)\in\mathcal{A}, 
+     a_2=\mathcal{U}(t_2)\in\mathcal{A}, \ldots$
+     &{\emph{singletons in $\mathcal{A}$}}\\&\\
+  $\oplus:\mathcal{A}\times\mathcal{A}\rightarrow\mathcal{A}$
+     &\parbox{2.85in}{\emph{type signature of $\oplus$: mapping from 
+     pairs of elements of $\mathcal{A}$ back to $\mathcal{A}$}}\\&\\
+  $\oplus\left(\mathcal{U}\left(t_1\right),
+     A_{1}\right) = A_2$
+     &{\parbox{2.85in}{\emph{in prefix form, a particular application 
+     of $\oplus$ with first argument a singleton}}}\\&\\
+  $\oplus\left(\mathcal{U}\left(t_1\right)\right):
+     \mathcal{A}\rightarrow\mathcal{A}$
+     &{\parbox{2.85in}{\emph{type signature of that particular application: 
+     mapping from $\mathcal{A}$ to $\mathcal{A}$}}}
+\end{tabular}
+\end{center}
+
+
+%\begin{align}
+%  {}&\mathcal{A}=\Mon{\T}{\oplus}{\Z},\text{ with unit }\mathcal{U}\\
+%  {}&A_1\in\mathcal{A}, A_2\in\mathcal{A}, \ldots\\
+%  {}&t_1\in\T, t_2\in\T, \ldots\\
+%  {}&a_1=\mathcal{U}(t_1)\in\mathcal{A}, 
+%     a_2=\mathcal{U}(t_2)\in\mathcal{A}, \ldots\\
+%  {}&\oplus:\mathcal{A}\times\mathcal{A}\rightarrow\mathcal{A}\\
+%  {}&\oplus\left(\mathcal{U}\left(t_1\right),
+%     \mathcal{A}'\right)\rightarrow a_3
+%\end{align}
+
+
+%\subsection{\color{Red}Too Much?}
+%
+%
+%It turns out that \emph{fold} is enough: we can write \emph{map} and \emph{filter} as particular folds. While they're nice to have, it's also important to realize that they're not strictly necessary. Once again, let $\mathtt{A}$ be a collection monoid with unit \mathcal{U}, identity element $\mathcal{Z}$, and monoid operation $\oplus$. 
+%
+%\begin{equation}
+%  \mathtt{map}\;f\;\mathcal{A} = 
+%  \mathtt{fold}\;\;(\oplus\circ
+%   f)\;\;\mathcal{Z}\;\;\mathcal{A}
+%\end{equation}
+
+
+
+\[\begin{CD}
+  [a_1,\ldots,a_n]  @>{\pp,f,\cup}>> 
+  \{f(a_1),\ldots,f(a_n)\}
+\end{CD}\]
+
+
+
+\[
+  \begin{CD}
+    A_{\mathit{list}} @>f>> \mathrm{map} 
+      \; f \; A_{\mathit{set}}
+  \end{CD}
+\]
+
+
+
+\begin{equation}
+\mathrm{hom}[\pp,\cup](f)A_{\mathit{list}}\rightarrow\{f(a_1),\ldots,f(a_n)\}
+\end{equation}
+
+
+
+\begin{algorithm}
+\centering
+\begin{minipage}{1.85in}
+  \Result \setto \{\}\;
+  \Foreach{$x$ \In $A_{\mathit{list}}$}
+  {\Result \setto \Result $\cup f(x)$ \;}
+  \Return \Result \;
+\end{minipage}
+\end{algorithm}
+
+
+
+\[ 
+\xy 
+{\ar@{=>}  (0,15)*{}; (10,15)*{}}; 
+{\ar@3{->} (0,10)*{}; (10,10)*{}}; 
+{\ar@2{:>} (0,5)*{};  (10,5)*{}}; 
+{\ar@{|->} (0,0)*{};  (10,0)*{}}; 
+{\ar@2{~>} (15,0)*{}; (25,0)*{}}; 
+{\ar@{->>} (15,5)*{}; (25,5)*{}}; 
+{\ar@{<->} (15,10)*{};(25,10)*{}}; 
+{\ar@/^1pc/(15,15)*{};(25,15)*{}}; 
+\endxy 
+\] 
+
+
+
+\[ 
+\xy 
+{\ar ( 0,10)*+{list};  (20,20)*+{bag}};
+{\ar (20,20)*+{bag};   (40,10)*+{set}};
+{\ar ( 0,10)*+{list};  (20, 0)*+{perm}};
+{\ar (20, 0)*+{perm};  (40,10)*+{set}};
+\endxy 
+\] 
+
+
+
+%	\caption{Aide-memoire for theoretical notation}
+%	\label{tab:AideMemoire}
+%\end{table}
+
+
+
+\section{\color{Red}Color Names}
+
+
+
+Etiam aliquet augue. 
+
+
+
+\begin{center}
+  \begin{tabular}{ccccc}
+		{\color{GreenYellow}GreenYellow}       & 
+		{\color{Yellow}Yellow}                 & 
+		{\color{Goldenrod}Goldenrod}           & 
+		{\color{Dandelion}Dandelion}           & 
+		{\color{Apricot}Apricot}               \\
+		{\color{Peach}Peach}                   & 
+		{\color{Melon}Melon}                   &
+		{\color{YellowOrange}YellowOrange}     &
+		{\color{Orange}Orange}                 &
+		{\color{BurntOrange}BurntOrange}       \\
+		{\color{Bittersweet}Bittersweet}       &
+		{\color{RedOrange}RedOrange}           &
+		{\color{Mahogany}Mahogany}             &
+		{\color{Maroon}Maroon}                 &
+		{\color{BrickRed}BrickRed}             \\
+		{\color{Red}Red}                       &
+		{\color{OrangeRed}OrangeRed}           &
+		{\color{RubineRed}RubineRed}           &
+		{\color{WildStrawberry}WildStrawberry} &
+		{\color{Salmon}Salmon}                 \\
+		{\color{CarnationPink}CarnationPink}   &
+		{\color{Magenta}Magenta}               &
+		{\color{VioletRed}VioletRed}           &
+		{\color{Rhodamine}Rhodamine}           &
+		{\color{Mulberry}Mulberry}             \\
+		{\color{RedViolet}RedViolet}           &
+		{\color{Fuchsia}Fuchsia}               &
+		{\color{Lavender}Lavender}             &
+		{\color{Thistle}Thistle}               &
+		{\color{Orchid}Orchid}                 \\ 
+		{\color{DarkOrchid}DarkOrchid}         &
+		{\color{Purple}Purple}                 &
+		{\color{Plum}Plum}                     &
+		{\color{Violet}Violet}                 &
+		{\color{RoyalPurple}RoyalPurple}       \\
+		{\color{BlueViolet}BlueViolet}         &
+		{\color{Periwinkle}Periwinkle}         &
+		{\color{CadetBlue}CadetBlue}           &
+		{\color{CornflowerBlue}CornflowerBlue} &
+		{\color{MidnightBlue}MidnightBlue}     \\
+		{\color{NavyBlue}NavyBlue}             &
+		{\color{RoyalBlue}RoyalBlue}           &
+		{\color{Blue}Blue}                     &
+		{\color{Cerulean}Cerulean}             &
+		{\color{Cyan}Cyan}                     \\
+		{\color{ProcessBlue}ProcessBlue}       &
+		{\color{SkyBlue}SkyBlue}               &
+		{\color{Turquoise}Turquoise}           &
+		{\color{TealBlue}TealBlue}             &
+		{\color{Aquamarine}Aquamarine}         \\
+		{\color{BlueGreen}BlueGreen}           &
+		{\color{Emerald}Emerald}               &
+		{\color{JungleGreen}JungleGreen}       &
+		{\color{SeaGreen}SeaGreen}             &
+		{\color{Green}Green}                   \\
+		{\color{ForestGreen}ForestGreen}       &
+		{\color{PineGreen}PineGreen}           &
+		{\color{LimeGreen}LimeGreen}           &
+		{\color{YellowGreen}YellowGreen}       &
+		{\color{SpringGreen}SpringGreen}       \\ 
+		{\color{OliveGreen}OliveGreen}         &
+		{\color{RawSienna}RawSienna}           &
+		{\color{Sepia}Sepia}                   &
+		{\color{Brown}Brown}                   &
+		{\color{Tan}Tan}                       \\
+		{\color{Gray}Gray}
+  \end{tabular}
+\end{center}
+
+
+
+{\color{GreenYellow}GreenYellow}, {\color{Yellow}Yellow}, {\color{Goldenrod}Goldenrod}, {\color{Dandelion}Dandelion}, {\color{Apricot}Apricot}, {\color{Peach}Peach}, {\color{Melon}Melon}, {\color{YellowOrange}YellowOrange}, {\color{Orange}Orange}, {\color{BurntOrange}BurntOrange}, {\color{Bittersweet}Bittersweet}, {\color{RedOrange}RedOrange}, {\color{Mahogany}Mahogany}, {\color{Maroon}Maroon}, {\color{BrickRed}BrickRed}, {\color{Red}Red}, {\color{OrangeRed}OrangeRed}, {\color{RubineRed}RubineRed}, {\color{WildStrawberry}WildStrawberry}, {\color{Salmon}Salmon}, {\color{CarnationPink}CarnationPink}, {\color{Magenta}Magenta}, {\color{VioletRed}VioletRed}, {\color{Rhodamine}Rhodamine}, {\color{Mulberry}Mulberry}, {\color{RedViolet}RedViolet}, {\color{Fuchsia}Fuchsia}, {\color{Lavender}Lavender}, {\color{Thistle}Thistle}, {\color{Orchid}Orchid}, {\color{DarkOrchid}DarkOrchid}, {\color{Purple}Purple}, {\color{Plum}Plum}, {\color{Violet}Violet}, {\color{RoyalPurple}RoyalPurple}, {\color{BlueViolet}BlueViolet}, {\color{Periwinkle}Periwinkle}, {\color{CadetBlue}CadetBlue}, {\color{CornflowerBlue}CornflowerBlue}, {\color{MidnightBlue}MidnightBlue}, {\color{NavyBlue}NavyBlue}, {\color{RoyalBlue}RoyalBlue}, {\color{Blue}Blue}, {\color{Cerulean}Cerulean}, {\color{Cyan}Cyan}, {\color{ProcessBlue}ProcessBlue}, {\color{SkyBlue}SkyBlue}, {\color{Turquoise}Turquoise}, {\color{TealBlue}TealBlue}, {\color{Aquamarine}Aquamarine}, {\color{BlueGreen}BlueGreen}, {\color{Emerald}Emerald}, {\color{JungleGreen}JungleGreen}, {\color{SeaGreen}SeaGreen}, {\color{Green}Green}, {\color{ForestGreen}ForestGreen}, {\color{PineGreen}PineGreen}, {\color{LimeGreen}LimeGreen}, {\color{YellowGreen}YellowGreen}, {\color{SpringGreen}SpringGreen}, {\color{OliveGreen}OliveGreen}, {\color{RawSienna}RawSienna}, {\color{Sepia}Sepia}, {\color{Brown}Brown}, {\color{Tan}Tan}, {\color{Gray}
+
+
+
+Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Phasellus id velit eu metus tincidunt mattis. Proin fringilla, est quis varius placerat, odio nunc fringilla massa, non aliquam odio nulla vitae ante. Sed commodo. Etiam aliquet augue. Maecenas porta, nibh eu malesuada facilisis, nunc neque pellentesque mi, at porttitor nisi lacus id turpis. Aliquam non nunc at velit congue aliquam. Curabitur lectus diam, tristique et, aliquet nec, luctus sit amet, turpis. Sed et nisl. Etiam hendrerit nisi eget quam. Suspendisse potenti. Duis tempor, ante a commodo consectetuer, leo justo sollicitudin lacus, sed rutrum eros mi sed tortor. Vestibulum diam risus, ornare ac, cursus ac, molestie eget, lectus. Phasellus sit amet risus eget nunc hendrerit ornare. Curabitur porta, velit interdum ultricies nonummy, felis odio sodales urna, sit amet hendrerit pede quam sit amet turpis. Mauris porta ipsum et mauris. Donec malesuada arcu non nisl. Praesent euismod lorem in magna. Morbi id augue quis tortor mollis porttitor. Aliquam lobortis pede vitae ligula. 
+
+Fusce eros nunc, ultrices eget, interdum in, mattis accumsan, elit. Nullam eget eros sed eros mollis venenatis. Duis tristique tellus ut dolor. Sed consectetuer felis vel felis. Nulla laoreet urna eget quam. Donec rutrum sodales ipsum. Donec tempor tellus quis leo. Nam luctus risus vel diam. Donec in lorem eget magna congue luctus. Suspendisse potenti. Aenean pretium velit sit amet purus. Nulla tempus risus vitae metus. Suspendisse et lorem. Donec arcu turpis, dictum congue, aliquet at, ultricies at, leo. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nam eu quam eu leo tempus cursus. In iaculis interdum risus. Nunc adipiscing porta sapien. 
+
+Aliquam erat volutpat. Praesent elementum est et urna. Vivamus elementum. Duis libero. Proin mattis laoreet orci. Sed id mauris quis mauris pretium pharetra. Ut rhoncus neque quis magna. Fusce adipiscing imperdiet erat. Nam viverra velit et mi. Sed ac turpis. Vivamus lobortis ornare nisi. Curabitur suscipit, lectus vel imperdiet lobortis, augue mauris malesuada justo, et blandit risus urna in lorem. Ut dolor metus, congue nec, mattis non, molestie vitae, urna. Phasellus vulputate elit eget augue. Phasellus odio lacus, volutpat in, posuere vel, porta sit amet, nulla. Nunc erat enim, pretium non, varius sed, iaculis vel, libero. Vestibulum vel quam. In imperdiet laoreet magna. 
+
+Phasellus a ante quis sem aliquam consectetuer. Curabitur arcu magna, fringilla et, dapibus nec, dapibus et, nisl. Etiam consectetuer nisl a ipsum. Duis eget quam. Aliquam erat volutpat. Nam sed diam. Aenean blandit luctus eros. Maecenas fringilla rhoncus nibh. Aenean gravida facilisis leo. Pellentesque ultrices ante eget dui. Praesent augue nibh, dapibus ac, ullamcorper id, suscipit ac, neque. Maecenas tempus congue neque. Phasellus scelerisque. Sed porttitor rhoncus diam. Suspendisse potenti. Nam egestas quam sit amet est. Proin at nulla. Donec urna est, gravida at, porttitor id, tincidunt vel, nulla. Morbi et tortor a mi suscipit malesuada. Ut laoreet, dui vitae laoreet ornare, erat lorem mollis turpis, eu hendrerit magna lectus vel nunc. 
+
+Etiam fermentum, tellus eget laoreet posuere, pede diam iaculis massa, eu lobortis velit turpis sed eros. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos hymenaeos. Phasellus nonummy tellus a turpis. Quisque nec risus. Praesent pharetra diam at lorem. Sed auctor velit vitae augue. Donec semper facilisis eros. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Pellentesque elit nisi, lobortis eu, pellentesque in, ullamcorper in, pede. Ut ullamcorper sapien eget massa. 
+
+
+
