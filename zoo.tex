@@ -116,7 +116,7 @@ But that is really going too far, because, although the unit function and sets o
 \subsection{\color{Red}The Collection Monoids}
 
 
-Lists are our first example of a \textbf{collection monoid}. There are three other kinds: \emph{set}, \emph{bag}, and \emph{permutation}. They differ in whether they are ordered and whether they are \emph{idempotent}, and that is why there are just four: two choices for `ordered or not' and two, independent choices for `idempotent or not.' We have already explained the concept of \emph{ordered}. Let us define idempotent:
+Lists are our first example of a \textbf{collection monoid}. There are three other kinds: \emph{set}, \emph{bag}, and \emph{permutation}.\footnote{my friend, Carl Kelso, coined the term \emph{suit} for such monoids; this is altogether a more suitable name because it is a monosyllable, like the other three names, it directly invokes the correct intuition from playing cards, and it is less technically fearsome than \emph{permutation}.} They differ in whether they are ordered and whether they are \emph{idempotent}, and that is why there are just four: two choices for `ordered or not' and two, independent choices for `idempotent or not.' We have already explained the concept of \emph{ordered}. Let us define idempotent:
 \begin{definition}
 An operation, $\oplus$, is \textbf{idempotent} if $x\oplus x=x$ for any $x$ in the domain of $\oplus$.
 \label{def:idempotentoperation}
@@ -130,7 +130,7 @@ A collection is \textbf{idempotent} if no duplicate elements are allowed.
 We see below that idempotency of an operation does not suffice, in general, to guarantee idempotency of a collection. So, the two definitions, while related, are distinct.
 
 
-A list monoid is neither commutative nor idempotent, so, in some sense, it is the simplest of the four kinds. A \emph{permutation} monoid is idempotent and non-commutative. Consider the ordered sequence $\pmx{1, 2, 3}$. Because it is ordered, it is distinct from $\pmx{2, 1, 3}$, and, in fact, from all four other permutations or orderings of the numbers 1, 2, and 3. Because $\pmx{1, 2, 3}$ is idempotent, we cannot add, prepend, or append another copy of 1, 2, or 3 to it.
+A list monoid is neither commutative nor idempotent, so, in some sense, it is the simplest of the four kinds. A \emph{permutation} monoid is idempotent and non-commutative. Consider the ordered sequence $\pmx{1, 2, 3}$. Because it is ordered, it is distinct from $\pmx{2, 1, 3}$, and, in fact, from all four other permutations or orderings of the numbers 1, 2, and 3. Because $\pmx{1, 2, 3}$, as a permutation, is idempotent, we cannot add, prepend, or append another copy of 1, 2, or 3 to it.
 
 
 \begin{trial}
@@ -254,6 +254,7 @@ In Haskell, deconstruction appears directly in pattern-matching forms. Monadic l
 
 The following shows how to write the \emph{length} function in these two languages. Later, we see that these are monadic forms of \emph{monoid homomorphisms}. These particular monoid homomorphisms are functions from list monoids to $\Mon{\nats}{+}{0}$ --- functions that will convert any member of a list monoid to a natural number:
 
+\newpage
 
 \begin{verbatim}
   (define (length list)
@@ -398,7 +399,7 @@ This device is just an application of \emph{disjoint union} from set theory. Now
 which is approximately the square of the number of electrons in the observable Universe. So, while this new dictionary is technically finite, and is vastly smaller than Borges' library, it could never be physically written down, so, it is purely conceptual, once again.
 
 
-The design of $\boxplus$ opens up can of worms of practical ramifications. A computer program implementing the operation for idempotent collection monoids must have a way of detecting whether a candidate element is already in a collection. The straightforward linear search --- iterating over the entire collection --- is only practical for small collections. Other search structures, like hash tables or B-trees, are a practical necessity in any scalable implementation.
+The design of $\boxplus$ opens up a can of worms of practical ramifications. A computer program implementing the operation for idempotent collection monoids must have a way of detecting whether a candidate element is already in a collection. The straightforward linear search --- iterating over the entire collection --- is only practical for small collections. Other search structures, like hash tables or B-trees, are a practical necessity in any scalable implementation.
 
 
 The non-idempotent (infinite) collection monoids do not escape scot-free. If they are unordered, they must also have search optimizations, not for insertion, but for finding and grouping. Only lists can scalably perform both insertion and finding, at least finding-by-numerical-index, without search optimizations (though scalable finding requires array implementation with other ramifications on recursive programming patterns).
