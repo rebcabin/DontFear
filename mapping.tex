@@ -1,0 +1,591 @@
+\section{\color{Red}Mapping One Monoid to Another}
+
+
+Once we figure out how to convert elements of one monoid to elements of another, we have everything we need for all kinds of queries. The queries familiar from relational databases \emph{are} nothing more nor less than transformations from one monoid to another. Think of a query that gets a list of distinct salaries from an employee database. Database practitioners will recognize this as
+\begin{center}
+  \begin{verbatim}
+    SELECT DISTINCT e.salary
+    FROM employees e
+  \end{verbatim}
+\end{center}
+and we will recognize it as transformation from a collection monoid of employees to a monoid of sets of salaries. Given \emph{any} particular collection of employees --- an element of a collection monoid of employees, the transformation will return the correct set of salaries --- an element of a monoid of sets of salaries. If we had left off the \verb"DISTINCT", we would have gotten an element of a monoid of \emph{bags} of salaries, and the statement above would have been a transformation from a collection monoid of employees to a monoid of bags of salaries. 
+
+
+In the following, we show how to construct arbitrary monoid-to-monoid transformations, and argue, by example, that any query one would care to make over database tables, over XML streams, or over structured graphs of objects in memory is such a transformation. 
+
+
+Let $\M{1}=\Mon{\T}{\oplus_{1}}{\Z_{1}}$ and $\M{2}=\Mon{\Sb}{\oplus_{2}}{\Z_{2}}$ be two monoids. 
+\begin{definition}
+A \textbf{monoid homomorphism} is a transformation from $\M{1}$ to $\M{2}$ --- a prescription for converting elements of $\M{1}$ to elements of $\M{2}$ --- that preserves the monoid operations. 
+\label{def:monoidhomomorphism}
+\end{definition}
+The rest of this section explains this definition. Note the following fine points:
+\begin{enumerate}
+  \item A \textbf{mapping} is a generic prescription for converting inputs, drawn from a \textbf{domain} set, to outputs, elements of a \textbf{range} or \textbf{codomain} set. A mapping may not have an output defined for every conceivable input, and it may have more than one output defined for some particular inputs.
+	\item A \textbf{partial function} is a mapping that does not have an output for every input, but has a single output when it has any output.
+	\item A \textbf{function} is a mapping that has a single output value for every input value in its domain. A function \textbf{covers} its domain. The fact may be emphasized by calling it a \textbf{total function}.
+	\item A \textbf{surjection} is a function that covers the codomain, meaning that for every value in the codomain there is at least one element of the domain that maps to it. Synonyms are \textbf{surjective function} or \textbf{onto function}, with the word `onto' being abused as an adjective. 
+	\item An \textbf{injection} is a function with the property that any particular output value corresponds to at most one input value. Synonyms are \textbf{injective function} or \textbf{one-to-one function}. 
+  \item A \textbf{bijection} or a \textbf{one-to-one correspondence} is a function that is both an injection and a surjection. 
+	\item A \textbf{multi-valued function} or \textbf{non-deterministic function} is a mapping that has more than one output for at least one particular input. It is not a function, so the English, here, is contradictory. But this is the standard nomenclature. 
+	\item The inverse of a surjection is either a multi-valued injection or an injection.
+	\item The inverse of an injection is either a partial surjection or a surjection.
+	\item The inverse of a bijection is a bijection. 
+	\item An \textbf{isomorphism} is a bijection that preserves all operations and structure. The domain and codomain of an isomorphism are \textbf{isomorphic}. For all intents and purposes, isomorphic sets are identical.
+	\item A \textbf{transformation} is a total function with some additional proviso. In the case of monoid homomorphisms, the proviso is `preserving the monoid operations.'
+\end{enumerate}
+
+
+Start off with a concrete example: let $\M{1}$ be $\Mon{\T}{\pp}{\emptylist}$, the monoid of lists of elements of any type $\T$, and $\M{2}$ be $\Mon{\nats}{+}{0}$, the monoid of integers under addition. Let $c$ be the particular homomorphism that counts the number of members of a list, defined recursively as follows:
+\begin{align*}
+  c(\emptylist)        & = 0 \\
+  c([x]\pp\mathcal{L}) & = 1 + c(\mathcal{L})
+\end{align*}
+where $[x]$ is a singleton list and $\mathcal{L}$ is any list in $\M{1}$. It is clear that $c$ has $\M{1}$ covered, meaning that no matter what list from $\M{1}$ you give to $c$, it will give an answer. It is also clear that every application of $c$ will yield just one answer, so $c$ is, indeed, a function from $\M{1}$ to $\M{2}$. 
+
+The most important thing to note is how $\pp$ operations in $\M{1}$ become $+$ operations in $\M{2}$. The homomorphism, $c$, not only converts elements of $\M{1}$ to elements of $\M{2}$, but converts the \emph{operation} of $\M{1}$, in parallel, to the \emph{operation} of $\M{2}$. Thus, $c$, while it is a function, is not \emph{just} a function, but a transformation. The mapping of operations holds not just for singletons, but for arbitrary lists in $\M{1}$ Let us deduce, from the above, that 
+\begin{equation}
+  c(\mathcal{L}_{1}\pp\mathcal{L}_{2})=c(\mathcal{L}_{1})+c(\mathcal{L}_{2})
+  \label{eqn:inducl}
+\end{equation}
+where $\mathcal{L}_{1}$ and $\mathcal{L}_{2}$ are any lists whatever. How? By induction. The next paragraph covers the argument in detail. However, this kind of argument follows such a clear and frequent pattern that, in the rest of this tutorial, we simply say ``by induction'' and assume the point made. 
+
+
+Equation \ref{eqn:inducl} is certainly true when $\mathcal{L}_{1}$ is a singleton, by the definition of $c$, or when $\mathcal{L}_{1}$ is the empty list, which is the identity of the list monoid, so that
+\begin{align*}
+  c(\emptylist\pp\mathcal{L}_{2})&=c(\mathcal{L}_{2})\\
+  =0+c(\mathcal{L}_{2})&=c(\emptylist)+c(\mathcal{L}_{2})
+\end{align*}
+The only remaining case is where $\mathcal{L}_{1}$ has more than one element. Write it as $[x]\pp\mathcal{L}_{0}$, with $\mathcal{L}_{0}$ arbitrary non-empty.\footnote{The argument is stronger than necessary: we could allow $\mathcal{L}_{0}$ to be empty, but it is perhaps more clear this way.} The definition of $c$ guarantees that $c(\mathcal{L}_{1})=1+c(\mathcal{L}_{0})$. Assume, hypothetically (for the sake of argument), that 
+$$c(\mathcal{L}_{0}\pp\mathcal{L}_{2})=c(\mathcal{L}_{0})+c(\mathcal{L}_{2})$$
+Now consider 
+$$\mathcal{L}_{1}\pp\mathcal{L}_{2}=[x]\pp\mathcal{L}_{0}\pp\mathcal{L}_{2}$$
+By associativity, which holds for any monoid operation, write 
+\begin{align*}
+  c([x]\pp(\mathcal{L}_{0}\pp\mathcal{L}_{2})) &=
+  1+c(\mathcal{L}_{0}\pp\mathcal{L}_{2})\\
+  &= 1+c(\mathcal{L}_{0})+c(\mathcal{L}_{2})\\
+  &= c(\mathcal{L}_{1})+c(\mathcal{L}_{2})  \\
+  =c(([x]\pp\mathcal{L}_{0})\pp\mathcal{L}_{2})
+  &=c(\mathcal{L}_{1}\pp\mathcal{L}_{2})
+\end{align*} 
+We have proved equation \ref{eqn:inducl} for the empty and singleton cases, and we have proved that \emph{if} it is true for a list of any length \emph{then} it is true for a list of length one greater. Therefore it must be true for lists of any length. $\blacksquare$
+
+
+Generalizing, for $\phi$ to be a transformation from $\M{1}$ to $\M{2}$ means that $\phi(a_1)=a_2$ and $\phi(b_1)=b_2$ are definite elements of $\M{2}$ just when $a_1$ and $b_1$ are elements of $\M{1}$ because the transformation is a function with a proviso. The proviso is `preserve the monoid operations,' but what does that mean in general? It has to be that usage of $\oplus_1$ gets turned into usage of $\oplus_2$ roughly as follows:
+\begin{equation}
+  \phi(a_1 \oplus_1 b_1) = \phi(a_1) \oplus_2 \phi(b_1) = a_2 \oplus_2 b_2
+  \label{eqn:homomorphismOne}
+\end{equation}
+but this causes a problem. Suppose $\M{1}$ is an idempotent monoid, meaning that 
+$$a_1 \oplus_1 a_1 = a_1$$
+Then, the attempt at preserving operations, equation \ref{eqn:homomorphismOne}, implies that
+$$\phi(a_1 \oplus_1 a_1) = \phi(a_1)\oplus_2\phi(a_1)=a_2\oplus_2 a_2$$
+but also that
+$$\phi(a_1 \oplus_1 a_1) = \phi(a_1)= a_2$$
+
+
+All is well if $\M{2}$ is also idempotent, but, if not, then $a_2\oplus_2 a_2=a_2$ could be wrong, and this calculation could lead to a contradiction. In particular, this makes it impossible to count the number of members in a set with a monoid homomorphism:
+\begin{align*}
+  \phi\left(\{a\}\cup\{a\}\right)&=\phi\left(\{a\}\right)+\phi\left(\{a\}\right)=2\\
+  \phi\left(\{a\}\cup\{a\}\right)&=\phi\left(\{a\}\right)=1
+\end{align*}
+
+
+We must introduce an auxiliary binary operation of \emph{difference} or \emph{minus}. This operation is not allowed within the monoid, but prevents duplicate operations when mapping idempotent monoids to non-idempotent ones. Let us develop \emph{minus} by comparison to set union. The monoid operation for sets is $\cup$ or \emph{union}, not formally defined up to this point; let us do that here:
+\begin{definition}
+  If $A$ and $B$ are sets, then $A\cup B$, read ``$A$ \emph{union} $B$,'' is the set of elements that appear either in $A$ or $B$.
+\end{definition}
+So, $\{1,2\} \cup \{2,3\}=\{1,2,3\}$, for instance.
+
+
+Now, given two sets, here is their difference
+\begin{definition}
+  If $A$ and $B$ are sets, then $A-B$, read ``$A$ \emph{minus} $B$,'' is the set of elements that appear in $A$ and not in $B$.
+\end{definition}
+So, $\{1,2\} - \{2,3\}=\{1\}$. This sort of definition works for the other idempotent monoid, permutations, because the order in which one takes elements out of a permutation does not matter. 
+\begin{equation*}
+  \pmx{1,2,3}-\pmx{3,2} = \pmx{1,2,3}-\pmx{2,3}
+\end{equation*}
+
+
+\begin{definition}
+  If $A$ and $B$ are permutations, then $A-B$, read ``$A$ \emph{minus} $B$,'' is a permutation consisting of the elements in $A$, but not in $B$, without changing the order in $A$.
+\end{definition}
+
+
+We are now equipped, with \emph{minus} defined for both kinds of idempotent monoids, to resolve the conundrum by writing
+
+
+\begin{definition} A monoid homomorphism $\phi : \M{1}\rightarrow\M{2}$ (definition \ref{def:monoidhomomorphism}) \textbf{preserves the monoid operations} through the following device:
+\begin{equation}
+  \phi(a \oplus_1 b) = \phi(a)\oplus_2\psi(\phi,b,a)
+\end{equation}
+where
+\begin{equation}
+  \psi(\phi,b,a)=
+  \begin{cases}
+    \phi(b-a) & \text{if $\M{1}$ is idempotent} \\ 
+    \phi(b)   & \text{otherwise}
+  \end{cases}
+\end{equation}
+\end{definition}
+$\blacksquare$
+
+
+Redoing the problematic computation of set length, it will no longer give out the pesky $2$:
+\begin{align*}
+  \phi\left(\{a\}\cup\{a\}\right) 
+  &= \phi\left(\{a\}\right)+\psi\left(\phi,\{a\},\{a\}\right)\\
+  &= \phi\left(\{a\}\right)+\phi\left(\{a\}-\{a\}\right) \\
+  &= 1 + \phi\left(\emptyset\right)=1+0=1
+\end{align*}
+
+
+We \emph{could} have made this definition ever-so-slightly smaller by simply defining \emph{minus} to be \emph{no-operation} or \emph{nop} for non-idempotent monoids. But the definition is more clear as stated above. Sometimes, clarity trades off against conciseness; usually they work together. 
+
+
+The similar problem of converting elements of a commutative (unordered) monoid into elements of a non-commutative (ordered) one is harder. Consider converting the set ${1,2,3}$ into a list. Can such a mapping be a homomorphism? Does it result in $[1,2,3]$ or $[2,1,3]$? What about the other four possible orders of $1$, $2$, and $3$? Since, without further information, the mapping does not have a unique result, it is not a properly defined function --- it is \emph{non-deterministic}. So it fails the first criterion for being a homomorphism, that of being a function, yielding a single output for every input. In this case, it is better to solve the problem in the particular, when it arises, than to attempt a general definition. So, we conclude:
+
+
+\begin{observation}
+Homomorphisms, in general, from commutative (unordered) collection monoids to non-commutative (ordered) collection monoids, do not exist.
+\end{observation}
+
+
+A natural question is whether the identity element of the source monoid always corresponds to the identity element of the destination monoid under any homomorphism. The answer is that it must, for, suppose it did not. Then, 
+\[
+  \phi(\mathcal{Z}_{1}) = x_2 \neq \mathcal{Z}_{2}
+\]
+would be some non-identity element. Now, pick some $m_1$ in $\mathcal{M}_1$ and consider the following calculation, which can lead to a contradiction:
+\begin{align*}
+  m_1 \oplus_1 \mathcal{Z}_1       &= m_1                   \\
+  \phi(m_1 \oplus_1 \mathcal{Z}_1) &= \phi(m_1) \defeq m_2  \\
+  {} &= \phi(m_1) \oplus_2 \psi(\phi,\mathcal{Z}_1,m_1) \\
+  {} &= m_2 \oplus_2 x_2 \neq m_2 \text{ in general}
+\end{align*}
+\begin{lemma}
+  A monoid homomorphism preserves the identity element.
+\end{lemma}
+
+
+\subsection{\color{red}A Zoo of Homomorphisms}
+
+
+Consider the following idioms --- \emph{map}, \emph{filter}, and \emph{fold} --- from functional programming and their relationships with monoid homomorphisms. Let $\mathcal{A}\langle\T\rangle=(a_1,a_2,\ldots)$ be a representative element of any of the four kinds of collection monoid, with $a_{i}$ its constituent elements of type $\T$, $\Ux{A}=\Ux{()}$ its unit function, $\oplus$ its monoid operation, and $\Z$ its identity. Write the type of $\mathcal{A}\langle\T\rangle$ itself as $(\T)$. 
+
+
+\subsubsection{\color{red}The \emph{map} idiom}
+
+
+\emph{Map} is a function of two arguments. The first argument is another function, $f$, that converts elements $t$ of type $\T$ to elements, $s=f(t)$, of another type set, $\Sb$. The second argument of map is an element of a collection monoid, say $\mathcal{A}\langle\T\rangle$. The final output is an element of the same kind of collection monoid, but with a potentially different type set. Here is \emph{map}, operating on $\mathcal{A}\langle\T\rangle$:
+\[
+  \mathtt{map}\;f\;\mathcal{A}\langle\T\rangle= 
+  \mathtt{map}\;f\;(a_1,a_2,\ldots) = 
+  \left( f(a_1),f(a_2),\ldots\right) = \mathcal{A}\langle\Sb\rangle
+\]
+This does not change the kind of collection monoid to which $\mathcal{A}$ belongs, just the base type of the monoid's elements' elements, and, therefore, implicitly, the unit function that converts base-type elements to singletons in the monoid. 
+
+We might say that if we feed \emph{map} its first argument only, that this combination, written $\mathtt{map}\;f$, is a function from $\mathcal{A}\langle\T\rangle$ to $\mathcal{A}\langle\Sb\rangle$, \emph{i.e.}, a function that converts elements of a collection monoid with base type $\T$ to elements of the same kind of collection monoid with base type switched out to $\Sb$. Write the type of this new combination function as follows:
+\[
+  \mathtt{map}\;f:\Mon{\T}{\oplus}{\Z}
+    \rightarrow\Mon{\Sb}{\oplus}{\Z}
+\]
+There it is: the monoid homomorphism is $\mathtt{map}\;f$. It \emph{preserves} the monoid operation because it does not \emph{change} the monoid operation. The identity element of the two collection monoids is the same because it pertains to the monoid rather than to the base sets, $\T$ and $\Sb$. The unit function also pertains to the monoid, so doesn't change in any meaningful way. 
+
+%Its domain and codomain change, but its functional action doesn't. Abbreviate $\Ux{()}$ as just $\U$ in the following:
+%\begin{center}
+%\begin{tabular}{ll}
+%  $\U:\T\rightarrow(\T)$ & {\emph{$\U$ maps elements of $\T$ to singleton members of $(\T)=\Mon{\T}{\oplus}{()}$}}\\
+%{$\rightarrow$}&{}\\
+%  $\U:\Sb\rightarrow(\Sb)$ & {\emph{$\U$ maps elements of $\Sb$ to singleton members of $(\Sb)=\Mon{\Sb}{\oplus}{()}$}}\\
+%\end{tabular}
+%\end{center}
+
+To derive a recursive form of the definition, we begin with a base case:
+\begin{equation}
+  \mathtt{map}\;f\;\emptycollection\defeq\emptycollection
+\end{equation}
+In other words, map has no effect on the empty collection. For the non-base case, as discussed at length concerning permutations, we apply a \emph{deconstruction rule} to the monoid-element argument:
+\begin{align}
+  \mathtt{map}\;f\;\mathcal{A}\langle\T\rangle
+     &=\mathtt{map}\;f\;(a_1,a_2,\ldots)\nonumber\\
+  {} &= \mathtt{map}\;f\;\left\lgroup (a_1)\oplus(a_2,\ldots)\right\rgroup 
+         \nonumber\\
+  {} &= \mathtt{map}\;f\;\left\lgroup \U(a_1)\oplus(a_2,\ldots)\right\rgroup
+         \nonumber\\
+  {} &= \mathtt{map}\;f\;\left\lgroup
+     \U\left(a_1\right)\oplus{\mathcal{A}'\langle\T\rangle}
+     \right\rgroup \nonumber\\
+  {} &\defeq\U\left\lgroup
+     f\circ\U^{-1}\left(
+     \U\left(a_1\right)\right)\right\rgroup\oplus
+     \left\lgroup\mathtt{map}\;f\;{\mathcal{A}'\langle\T\rangle}\right\rgroup
+     \label{def:mapdefone}\\
+  {} &\defeq\U\left(f\left(a_1\right)\right)\oplus
+     \left\lgroup\mathtt{map}\;f\;{\mathcal{A}'\langle\T\rangle}\right\rgroup
+     \label{def:mapdeftwo}
+\end{align}
+where $\mathcal{A}=(a_1)\oplus\mathcal{A}'$. There is quite a bit of subtle `junk' math going on, here, with the unit function, just to get consituent elements of $\mathcal{A}$ out of the collection monoid so $f$ can operate on them, then subjected to the unit again so they can get $\oplus$'ed back on to the front of the recursive application of $\mathtt{map}\;f$ to $\mathcal{A}'$. In the definition \ref{def:mapdefone}, the notation $f\circ\U^{-1}$ means \emph{function composition}, introduced at length below under the \emph{fold} idiom. In this case, \emph{map} composes $f$ with the \emph{inverse} of $\U$, written $\U^{-1}$. \emph{Map} may need to know how to \emph{decondition} singletons with the inverse of the unit function, to take them out of their collection monoid. We know from the preliminary points of this section that not every function has an inverse that is, itself, a function. Fortunately, the unit functions of all the kinds of colletion monoids are invertible. Such is \emph{not} the case for unit functions of non-collection monoids --- those may have multi-valued inverses. It turns out that, when used under \emph{map} as above, any value of a multi-valued inverse may be taken since the unit is immediately applied, a fact reflected in the second, alternative definition \ref{def:mapdeftwo}.
+
+
+Keep these remarks in mind as we proceed through the \emph{filter} and \emph{fold} idioms, and as we endeavor to extend each of the idioms to non-collection monoids. Ultimately, these considerations will lead us to \emph{monads} over \emph{monoids}, since monads provide a clean, general technique for finessing away `junk' math over the unit functions. 
+
+
+Here is an example of \emph{map} at work in a Haskell-like programming language. Suppose a function, $\mathtt{intToChar}$, which converts integers to their ASCII character equivalents. Now, suppose a list of integers, $[97, 98, 99]$. Convert the entire list of integers to their character equivalents as follows:
+\begin{center}
+  \verb"map intToChar [97,98,99]" $\rightarrow$ \verb$['a','b','c']="abc"$
+\end{center}
+So, \verb"map intToChar" will convert any list of integers --- any element of the monoid of lists of integers --- to a list of characters --- an element of the monoid of lists of characters. The final equality obtains because functional programming languages usually represent character strings as lists of individual characters.
+
+
+The definition of \emph{map} also works for idempotent collection monoids like set. Suppose a function \verb"nextPrime" that maps integers to the next higher prime number, and map it over a set of integers, for instance, $1{\dotdot}10=\{1,2,\ldots10\}$ (in general, abbreviate the set of integers from $m$ to $n$ with double dots, as $\{ m{\dotdot}n\}$): 
+\begin{center}
+  \verb"map nextPrime {1..10}" $\rightarrow$ \verb"{2,3,5,7,11}" 
+\end{center}
+By this application, a set containing ten members becomes a set containing five members, because the duplicates get eliminated. In mathematics, elimination of duplicates is automatic, effortless, and almost magical. In real-world computation, we humans must do some work to program a computer to do some more work to get rid of them. 
+
+
+Back to the generalities, write the type of the function $f$ as $\T\rightarrow\Sb$, and the type of \emph{map}, itself as something that transforms a function of type $\T\rightarrow\Sb$ to something of type $\Mon{\T}{\oplus}{\Z}\rightarrow\Mon{\Sb}{\oplus}{\Z}$:
+\begin{equation}
+  \mathtt{map}:(\T\rightarrow\Sb)\rightarrow
+    \left(\Mon{\T}{\oplus}{\Z}
+    \rightarrow\Mon{\Sb}{\oplus}{\Z}\right)
+  \label{eqn:mapdefinition}
+\end{equation}
+So, \emph{map} is a \emph{homomorphism-maker}: feed it a function that transforms the base types, and \emph{map} gives you back a homomorphism amongst collection monoids.
+
+
+\begin{remark}
+Generally, given a function of multiple arguments, the idea of giving it its arguments one at a time and interpreting the results as functions of the remaining arguments is \emph{Currying}. A Curried function is a function of one argument that returns, recursively, a function of any remaining arguments. Any function can be Curried. To Curry a function of no arguments, just give it an argument to ignore. The similarity to the construction of collection monoids from singletons is intentional: Currying builds up multi-ary functions from unary functions, that is, from functions of single arguments.
+\end{remark}
+
+
+The \emph{map} idiom, as understood so far, produces homomorphisms for collection monoids. Can it be given any meaning for non-collection monoids? Let $\mathcal{L}_{\nats}$ be $\Mon{\nats}{+}{0}$ and $\mathcal{L}_{\ints}$ be $\Mon{\ints}{+}{0}$, and let $f$ be a function from $\nats$ to $\ints$ that, say, takes every input and returns its negative. So, $f(3)=-3$ and so on. $f$ is properly formed to be an argument of \emph{map} because $f$ is a function from the base-type set of a monoid to another base-type set of the `same kind of' monoid. What could be the meaning of $\mathtt{map}\;f$ in this case? How about a mapping from $\mathcal{L}_{\nats}$ to $\mathcal{L}_{\ints}$ that preserves the operation $+$? In other words, as a monoid homomorphism? Viewed this way, map fulfills exactly definition \ref{eqn:mapdefinition}. Specifically, it takes a function between two bare sets, namely $f$, and converts it into a homomorphism, namely $\mathtt{map}\;f$, between two instances of the same kind of monoid. The `kind' of monoid is specified by the monoid operation and the identity element, precisely what $\nats$ and $\ints$ have in common in our example. In this case, the homomorphism is not `onto' because it never produces a positive element of $\ints$. If we want an `onto' homomorphism, then we could view the target as the monoid of negative integers, $\mathcal{L}_{-\nats}$, which is certainly closed under addition and therefore a properly defined monoid. 
+
+
+Now, recall that \emph{map} does some subtle juggling of the unit functions and their inverses. Let's look at a non-collection monoid like $\Mon{\nats}{+_{12}}{12}$ whose unit function has a multi-valued, non-functional inverse. That unit function is \emph{residual modulo 12}, and its inverse is multi-valued because, for instance, 1, 13, 25, \ldots are all preimages of 1. Therefore the `inverse' of 1 does not have a single answer, so it's not a function. Now, consider an $f$ like $\lambda x.x^2$, the function that just computes the square of its input. How could we compute, say, $\mathtt{map}\;(\lambda x.x^2)\;(7)_{12}$, where the monoid is the clock-arithmetic monoid? Well, since we immediately un-invert the inverse (see definitions \ref{def:mapdefone} and \ref{def:mapdeftwo}), we can pick \emph{any} of its values, because, in all cases, the answer is just $49$ mod $12=1$. 
+
+
+All This means that we can promote the \emph{map} idiom from its origin over lists in functional programming up to general collection monoids and further up to non-collection monoids. 
+
+
+\subsubsection{\color{red}The \emph{filter} idiom}
+
+
+\emph{Filter} is a function of two arguments: (1) a predicate that, for any element of the type set $\T$, returns a boolean $\in\{\text{true},\text{false}\}$; and (2), an element of a collection monoid $\mathcal{A}=\Mon{\T}{\oplus}{\Z}$ of type $(\T)$. It is defined as follows:
+  $$\mathtt{filter}\;p\;\mathcal{A}=\bigoplus^n_{i=1}
+    \begin{cases}
+       \U(a_i) & \text{if $p(a_i)$} \\ 
+       \Z & \text{otherwise}
+    \end{cases}$$
+This just means ``use $\oplus$ to combine either the singleton $\U(a_i)$ or the identity $\Z$ of the monoid into the overall result for every $a_i$ in the input, depending on whether the predicate $p(a_i)$ evaluates to true.'' An alternative definition, in recursive style, equivalent in every way for collection monoids, is the following:
+  $$\mathtt{filter}\;p\;(a_1,a_2,\ldots,a_n) =
+  \begin{cases}
+    \U(a_1)\oplus\mathtt{filter}\;p\;(a_2,\ldots,a_n) & \text{if $p(a_i)$} \\
+    \mathtt{filter}\;p\;(a_2,\ldots,a_n) & \text{otherwise}
+  \end{cases}$$
+
+Following in the footsteps of \emph{map}, above, consider these type expressions:
+\begin{center}
+\begin{tabular}{ll}
+  $p:\T\rightarrow\{\text{true},\text{false}\}$ 
+    & \parbox{2.85in}
+      {\footnotesize\emph{The type of $p$ is `function from 
+      $\T$ to the boolean constants'}}\\
+  {}&{}\\
+  $\mathcal{A}:(\T)$ 
+    & \parbox{2.85in}
+      {\footnotesize\emph{The type of $\mathcal{A}$ is $(\T)$ or 
+      `collection monoid with base type $\T$'}}\\
+  {}&{}\\
+  $\mathtt{filter}\;p\;\mathcal{A}:(\T)$
+    & \parbox{2.85in}
+      {\footnotesize\emph{The type of $\mathtt{filter}\;p\;\mathcal{A}$ 
+      is also $\T$}}\\
+  {}&{}\\
+  $\mathtt{filter}\;p:(\T)\rightarrow(\T)$
+    & \parbox{2.85in}
+      {\footnotesize\emph{The type of $\mathtt{filter}\;p$ is 
+      $(\T)\rightarrow(\T)$, 
+      or `function from $(\T)$ to $(\T)$,' that is, a monoid homomorphism}}\\
+  {}&{}\\
+  $\mathtt{filter}:(\T\rightarrow\{\text{true},\text{false}\})
+    \rightarrow(\T)\rightarrow(\T)$
+    & \parbox{2.85in}
+      {\footnotesize\emph{The type of $\mathtt{filter}$ is `function 
+      of a predicate that returns a monoid homomorphism'}}\\
+\end{tabular}
+\end{center}
+
+
+So $\mathtt{filter}\;p$ is a homomorphism from $(\T)$ to $(\T)$, and \emph{filter} is another homomorphism-maker, this time, a function that converts \emph{predicates} into monoid homomorphisms. Each resulting homomorphism changes none of the the base type, the operation, the unit, or the identity of the monoid; it just removes elements from elements of the source collection monoid that happen not to satisfy the predicate $p$. 
+
+
+So, how do the source and destination monoids differ? They may or may not. The most straightforward interpretation of homomorphism $\mathtt{filter}\;p$ is that it just takes an element of a monoid and produces another element of the same monoid. But, depending on one's point of view and details of the predicate, it also produces an element of another monoid, one in which elements of the base type --- constituents elements of the elements of the monoid --- are only those that satisfy $p$! Suppose $p$ is \emph{even?}, the predicate that returns \emph{true} if its argument is an even element of $\nats$ and \emph{false} otherwise, and the source monoid is lists of natural numbers, $[\nats]$. Then, $\mathtt{filter}\;p$ could be viewed either as a homomorphism to the distinct monoid of lists of even integers or as a homomorphism back to $[\nats]$, just one that happens always to produce lists of even numbers. 
+
+
+This will work for predicate \emph{odd?}, too, since a set of \emph{collections} of odd numbers is a monoid. But, a set of odd numbers, under $+$, is not a monoid because it's not closed: the sum of two odd numbers is nod odd. So what sense can we make of \emph{filter} for non-collection monoids? Once again, let $\mathcal{L}_{\nats}$ be $\Mon{\nats}{+}{0}$. Recall that the unit function for this monoid is $\lambda x.x$, the identity function. Now, let $p$ be \emph{even?}. Looking at the development above, $\mathtt{filter}\;p$ could be a monoid homomorphism to the monoid of even natural numbers under $+$ with $0$ as identity element. That is a proper monoid, since the sum of any two even integers is an even integer. It would not work if the predicates were \emph{odd?} or \emph{prime?}, since the destinations would not be monoids (adding two primes does not necessarily produce a prime, and adding two odds never produces an odd). The lesson, here, is to be careful:
+
+
+\begin{observation}
+  $\mathtt{filter}\;p$ over non-collection monoids may produce outputs in a set that is not a monoid. 
+\end{observation}
+
+
+The predicate can depend upon any attributes of its input. \emph{Filter} creates a different homomorphism for each predicate. Imagine a predicate that can test an employee record for, say, green-card status: \[\mathtt{hasGreenCard}:
+\text{employeeRecord}\rightarrow\text{bool}\]
+Then, 
+\begin{center}
+\verb"filter hasGreenCard"
+\end{center}
+is a homomorphism that will take an element of any collection monoid of employee records and return an element of another collection monoid --- of the same kind of collection --- containing only those employees with green cards. This is just what the following SQL would do, presuming an attribute to store or method to compute the predicate:
+\begin{center}
+\begin{tabular}{l}
+\verb"SELECT e"\\
+\verb"FROM employees e"\\
+\verb"WHERE e.hasGreenCard"
+\end{tabular}
+\end{center}
+
+
+\subsubsection{\color{red}The \emph{fold} idiom}
+
+
+So far, we have a way of building monoid homomorphisms that change the base type ($\mathtt{map}\;p$) and a way of building monoid homomorphisms that change the members of the monoid ($\mathtt{filter}\;p$) without changing the base type. This next idiom changes the kind of monoid but not the base type. Recall that $\mathcal{A}$ is an element of an arbitrary collection monoid, $\Mon{\T}{\oplus}{\Z}$. Abbreviate the monoid as $\Mx{A}$. Now, suppose another monoid, not necessarily a collection monoid $$\Mx{B}\defeq\Mon{\T}{\otimes}{\mathcal{Y}}$$
+with unit function $\Ux{B}:\T\rightarrow\Mx{B}$. To make things easier to see, let
+\begin{equation}
+  b_i = \Ux{B}(a_i)
+  \label{eqn:monadunit}
+\end{equation}
+The $b_i$ are singletons in the new monoid, $\Mx{B}$, brought in one at a time from the constituent elements $a_i\in\T$ of $\mathcal{A}\in\Mx{A}$. 
+
+
+\emph{Fold} is a function of three arguments: (1) the monoid operation, $\otimes$, of $\Mx{B}$; (2) its corresponding monoid identity element, $\mathcal{Y}$; and (3) an element $\mathcal{A}$ of a source collection monoid, $\Mx{A}$, potentially of a different kind from $\Mx{B}$. Given its first two arguments, \emph{fold} converts its last argument into an element of the kind of monoid implied by its first two arguments. Define
+\begin{equation}
+    \mathtt{fold}\;\otimes\;\mathcal{Y}\;\mathcal{A} \defeq
+        b_{1}\otimes
+        (b_{2}\otimes
+        (\ldots(b_{n}\otimes
+        \mathit{\mathcal{Y}})\ldots))
+  \label{eqn:folddef}
+\end{equation}
+or, more explicitly:
+  $$ \mathtt{fold}\;\otimes\;\mathcal{Y}\;\mathcal{A} \defeq
+        \Ux{B}(a_1)\otimes
+        \left\lgroup
+        \Ux{B}(a_2)\otimes
+        \left\lgroup\ldots\left\lgroup
+        \Ux{B}(a_n)\otimes
+        \mathit{\mathcal{Y}}
+        \right\rgroup\ldots\right\rgroup
+        \right\rgroup $$
+
+
+In recursive style, the base case is
+\begin{equation}
+  \mathtt{fold}\;\otimes\;\mathcal{Y}\;\emptycollection\defeq\mathcal{Y}
+\end{equation}
+and the rest is
+\begin{equation}
+  \mathtt{fold}\;\otimes\;\mathcal{Y}\;\mathcal{A} \defeq
+    \Ux{B}(a_1)\otimes
+    \left\lgroup
+    \mathtt{fold}\;\otimes\;\mathcal{Y}\;\mathcal{A}'
+    \right\rgroup
+\end{equation}
+where $\mathcal{A}=(a_1)\oplus\mathcal{A}'$. 
+
+
+Notice that the unit function, $\Ux{B}$ is not one of the arguments of \emph{fold}. As before, the unit is just implied by the other attributes of the destination monoid $\Mon{\T}{\otimes}{\mathcal{Y}}$, in this case, by $\otimes$ and $\mathcal{Y}$.
+
+
+So, $\mathtt{fold}\;\otimes\;\mathcal{Y}$ --- given just two of its three arguments, as we can always do because of Currying --- is a function that converts any instance of an input \emph{collection} monoid to an instance of another monoid, $\Mon{\T}{\otimes}{\mathcal{Y}}$, not necessarily a collection monoid. In other words, $\mathtt{fold}\;\otimes\;\mathcal{Y}$ is a monoid homomorphism. That means that \emph{fold} must be another homomorphism-maker. Just as we did with \emph{map} and \emph{filter} above, let us write out \emph{fold's} types:
+
+
+\begin{center}
+\begin{tabular}{ll}
+  $\mathtt{fold}\;\otimes\;\mathcal{Y}:
+    \Mx{A}\rightarrow\Mx{B}$
+    & \parbox{2.85in}{\footnotesize\emph{The 
+      type of $\mathtt{fold}\;\otimes\;\mathcal{Y}$
+      is `function from $\Mon{\T}{\oplus}{\Z}$ to 
+      $\Mon{\T}{\otimes}{\mathcal{Y}}$', or just $\Mx{A}\rightarrow
+      \Mx{B}$ for short; that is, a homomorphism from 
+      any collection monoid $\Mx{A}$
+      to a monoid $\Mx{B}$}} \\
+  {}&{}\\
+  $\mathtt{fold}\;\otimes:\mathcal{Y}\rightarrow
+    \Mx{A}\rightarrow\Mx{B}$
+    & \parbox{2.85in}{\footnotesize\emph{The 
+      type of $\mathtt{fold}\;\otimes$
+      is `function from an identity element, $\mathcal{Y}$, to a
+      homorphism from any monoid $\Mx{A}$
+      to a monoid $\Mx{B}$'}}\\
+  {}&{}\\
+  $\mathtt{fold}:\otimes\rightarrow\mathcal{Y}\rightarrow
+    \Mx{A}\rightarrow\Mx{B}$
+    & \parbox{2.85in}{\footnotesize\emph{The 
+      type of $\mathtt{fold}$
+      is `function from an operation, $\otimes$ and a 
+      identity element, $\mathcal{Y}$, to a
+      homorphism from any monoid $\Mx{A}$
+      to a monoid $\Mx{B}$'}}\\
+  \end{tabular}
+\end{center}
+
+
+\emph{Fold} lets us, quite prettily, specify the target monoid homomorphism in bits and pieces. Fully specify it by writing $\mathtt{fold}\;\otimes\;\mathcal{Y}$; that expression is ready to take a monoid instance, $\mathcal{A}\in\Mx{A}$, and convert it into an instance $\mathcal{B}$ of $\Mx{B}$. Specify the target monoid's operation, but not its identity element, by writing $\mathtt{fold}\;\otimes$. Give that expression an identity element to get a monoid homomorphism. Delay all commitments by writing just $\mathtt{fold}$: to get a monoid homomorphism, supply both an operation and a identity element.
+
+
+\emph{Fold} is extremely versatile. Recall that this section started off with a homomorphism, $c$, from lists of elements, $\Mon{\T}{\pp}{\emptylist}$, to the monoid of natural numbers under addition, $\Mon{\nats}{+}{0}$. That homomorphism effects a count of the number of elements in the list. We defined $c$ explicitly by its actions on the empty list and, recursively, its action on a list consisting of a singleton concatenated to another list. Can we get an equivalent homomorphism out of \emph{fold}? Easily. First, map a function that converts anything to the constant 1 over the list, then apply \verb"fold + 0" to the result. The result will be a member of $\Mon{\nats}{+}{0}$. 
+
+
+Generalizing the above yields a prescription for \emph{function composition}. In general, if $g$ is a function from a set $A$ to a set $B$, and $f$ is a function from $B$ to a set $C$, then the composition of $f$ and $g$, written $f\circ g$, is the function from $A$ to $C$ defined by $f(g(a))$ for any $a$ in $A$. Spelling it out:
+\begin{align*}
+  g:\mathcal{A}\rightarrow\mathcal{B}\\
+  f:\mathcal{B}\rightarrow\mathcal{C}\\
+  f\circ g:\mathcal{A}\rightarrow\mathcal{C}
+\end{align*}
+
+
+The function to map over the lists is $\lambda x.1$, and $$g\defeq\mathtt{map}\;\lambda x.1:[\T]\rightarrow[1]$$ is a homomorphism from a list monoid of elements of any type to the (unique) monoid of lists of copies of the natural number 1. This homomorphism preserves the number of elements in the list, as would any map over a list, but changes every input element into the number 1. Now, let $f$ be \verb"fold + 0", the homomorphism that takes any collection of natural numbers and sums them. The composition
+\[  
+  c=f\circ g= (\mathtt{fold}\;+\;0) \circ (\mathtt{map}\;\lambda x.1)  
+\]
+will be the monoid homomorphism that counts the elements in any list. 
+
+
+What meaning can \emph{fold} have if its third argument is not a collection monoid? Note that $\mathcal{A}$, an element of the monoid $\Mx{A}$, will have a constituent element $a$ such that  $\mathcal{A}=\Ux{A}(a)$. The definition of \emph{fold} in equation \ref{eqn:folddef} now leads us to write
+\begin{equation}
+  \mathtt{fold}\;\otimes\;\mathcal{Y}\;\mathcal{A} \defeq
+        \Ux{B}(a)=
+        \Ux{B}\left({\mathcal{U}}^{-1}_{\mathcal{A}}
+        \left(\mathcal{A}\right)\right)
+  \label{eqn:foldnoncollectiondef}
+\end{equation}
+So, \emph{fold}ing over a non-collection monoid effectively just brings the input argument, the instance $\mathcal{A}=\Ux{A}(a)$ of monoid $\Mx{A}$, into monoid $\Mx{B}$ \emph{via} the unit function $\Ux{B}$. To do that, it must first `back out' $a$ from $\mathcal{A}$ by inverting $\mathcal{A}$'s unit function. The operation $\otimes$ and identity element $\mathcal{Y}$ in $\Mx{B}$ do not play a role when the domain monoid, $\Mx{A}$ is not a collection. 
+
+
+It is somewhat disquieting that we cannot write $\mathtt{fold}\;\otimes\;\mathcal{Y} = 
+\Ux{B}\circ{\mathcal{U}}^{-1}_{\mathcal{A}}$ 
+because $\mathtt{fold}\;\otimes\;\mathcal{Y}$ does `know' enough about $\mathcal{A}$ to reference ${\mathcal{U}}^{-1}_{\mathcal{A}}$.
+
+
+This gives us a requirement on unit functions: the composition $\Ux{B}\circ{\mathcal{U}}^{-1}_{\mathcal{A}}$ must be a function. In some specific cases, the composition $\Ux{B}\circ{\mathcal{U}}^{-1}_{\mathcal{A}}$ might be a function even if $\Ux{A}$ is not invertible. But, for it to be generally useful, we must be able to delay all commitments with \emph{fold}, which means
+
+
+\begin{observation}
+  \emph{Fold} operates only over monoids with invertible unit functions. 
+\end{observation}
+
+
+\section{\color{Red}From Monoids to Monads}
+
+
+The unit functions first arose from the constructions of lists as a monoid. We needed to say ``lists of \emph{what}?'' So, we needed to specify the base-type set, $\T$, then promote elements of that set into the monoid as singletons. The reason was to allow us a recursive definition of \emph{list}, which we could extend to the other kinds of collection monoid. All was well until we started building homomorphisms from the \emph{map}, \emph{filter}, and \emph{fold} idioms, wherefrom the unit function leapt up again with a vengeance to complicate matters. 
+
+
+The way out is the \emph{monad}, a derivative construct to the \emph{monoid}, that dramatically simplifies and unifies homomorphisms. Monads can be understood in a couple of different lights. A formal development requires some category theory, out of scope for this tutorial, but see, for instance, chapter 10 of \cite{arrows}. In practical terms, though, the difference is small, more a case of taking an opportunity for conciseness than anything else. But it is delicate and opens up the whole vista of optimization in the forms of the \emph{fusion law} and \emph{cheap deforestation}, also known as \emph{acid rain}. For benefit, we can reduce the three idioms to one, the monadic version of fold, by writing the others in its terms. Such is not possible in the monoidal forms due to the implacable implicitness of the unit, as we demonstrate in the next section.
+
+
+\subsection{\color{red}Writing \emph{map} as a \emph{fold}?}
+
+
+All three homomorphism-makers iterate, in a sense, over their input monoids. This leads us to the question whether they can be written in terms of one another. The most obvious first thing to try is to write \emph{map} as a \emph{fold}. To keep it concrete, assume $\mathtt{i2c}=\mathtt{intToChar}$, as we mapped it before over \verb"[97,98,99]":
+\begin{align*}
+   \mathtt{map\;\;i2c\;\;[97,98,99]}\rightarrow
+   \mathtt{['a','b','c']}&=\mathtt{"abc"} \\
+   {}&= \mathtt{['a']}\pp\mathtt{['b']}\pp\mathtt{['c']}
+\end{align*}
+How can we write this as a monoidal fold?  
+\[  \mathtt{fold}\;\otimes\;\mathcal{Y}\;\mathcal{A} =
+      \Ux{B}(a_1)\otimes
+      \left\lgroup
+      \Ux{B}(a_2)\otimes
+      \left\lgroup\ldots\left\lgroup
+      \Ux{B}(a_n)\otimes
+      \mathit{\mathcal{Y}}
+      \right\rgroup\ldots\right\rgroup
+      \right\rgroup  \]
+The first thing to do is rewrite this in prefix notation so that its Curried forms are visually apparent. Instead of $x\otimes y$, write $\otimes\;\;x\;\;y$, and
+\[  \mathtt{fold}\;\otimes\;\mathcal{Y}\;\mathcal{A} =
+      \otimes\;\;\Ux{B}(a_1)
+      \left\lgroup
+      \otimes\;\;\Ux{B}(a_2)
+      \left\lgroup\ldots\left\lgroup
+      \otimes\;\;\Ux{B}(a_n)
+      \;\;\mathit{\mathcal{Y}}
+      \right\rgroup\ldots\right\rgroup
+      \right\rgroup  \]
+What we want is
+\[    \pp\;\;[f(a_1)]\;\;
+      \left\lgroup
+      \pp\;\;[f(a_2)]
+      \left\lgroup\ldots\left\lgroup
+      \pp\;\;[f(a_n)]
+      \;\;\emptylist
+      \right\rgroup\ldots\right\rgroup
+      \right\rgroup  \]
+
+
+Since the destination collection monoid is still a list, $\Ux{B}$ must be $\Ux{\emptylist}$, but we really want it to be 
+
+
+\begin{verbatim}
+  xyz
+\end{verbatim}
+
+\subsection{\color{Red}Real-world programming}
+
+
+To cross the stream without category theory, it's best to work in a real-world, time-tested programming language, Haskell. 
+
+
+Let's look at how real programming languages approach the \emph{map}, \emph{filter}, and \emph{fold} idioms. Real programming languages do not (unfortunately) have greek letters and mathematical symbols like $\circ$.
+%\footnote{If you will indulge me in an opinion, this is a great shame. I believe that efforts to make programming languages more like English (or any other natural language) are misguided, because natural languages suffer from intolerable ambiguity, usually reflecting a greater ambiguity of thought. It is a far better idea to make programming languages more like mathematics, because that is almost by definition the unique enclave of human thought where ideas are as clean and precise as computers need them to be.} 
+Fortunately, the designers of Haskell have addressed the lack very concisely \cite{haskellsite}, so we may write the homomorphism $c$ as
+\begin{center}
+  \verb"(fold (+) 0) . (map \_ -> 1)"
+\end{center}
+and only three points of translation need addressing:
+\begin{enumerate}
+	\item In mathematical notation, we write $+$ for the binary function of two natural numbers that adds them. Haskell treats an unadorned $+$ as an infix operator, but can convert any infix operator into the normal prefix form of a function by wrapping it in parentheses. So, \verb"(+)" is a Haskell function of type
+\begin{center}
+  \verb"(+) :: (Num a) => a -> a -> a"
+\end{center}
+which means, given that type \verb"a" is any of the numerical types, then \verb"(+)" is of type function from \verb"a" to function of \verb"a" to \verb"a", or, equivalently, because of Currying, function of two \verb"a"'s to one \verb"a". 
+
+  \item Haskell uses backslash, \verb"\", to denote $\lambda$; underscore, \verb"_", to denote a variable whose value is not used; and \verb"->" to mean \verb"." in the context of a lambda abstraction. So $\lambda x.1$ is \verb"\x -> 1", the same as \verb"\_ -> 1" since \verb"x" is not used.
+
+  \item Haskell uses \verb"." for function composition.
+\end{enumerate}
+
+
+We will find Haskell to be genuinely useful in crossing the bridge from concepts to action. It directly supports the monoid concept in the form of a \emph{monad}. The difference can be understood in a couple of different lights. A formal development requires some category theory, out of scope for this tutorial, but see, for instance, chapter 10 of \cite{arrows}. In practical terms, though, the difference is small, non-critical, and more a case of taking an opportunity for conciseness than anything else. But it is delicate. 
+
+
+Let's review the monoidal way of building lists. Let $x$ be an element of the base-type set $\T$, and $[x]$ be a singleton element of the monoid of lists $\Mon{\T}{\pp}{\emptylist}$. Then, we have
+$$[x]=\Ux{\emptylist}\left(x\right)$$
+
+
+The easiest way to understand the difference is with a side-by-side development. 
+
+
+\begin{center}
+\begin{tabular}{cc}
+  $[x]\pp xs$ & \verb"(x:xs)" \\
+\end{tabular}
+\end{center}
+
+
+\emph{Bind} takes an instance of a monad, a function that converts the constituent element of an instance of a monad of that type
+
+
+\verb"bind" $[1,2,3]$ $\Ux{B}\circ{\mathcal{U}}^{-1}_{\mathcal{A}}$
+
+
+\begin{verbatim}
+  return :: a -> M a
+  (>>=)  :: M a -> (a -> M b) -> M b
+\end{verbatim}
